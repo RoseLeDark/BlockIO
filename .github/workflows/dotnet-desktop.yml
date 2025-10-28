@@ -1,0 +1,40 @@
+name: Build and Test BlockIO
+
+on:
+  push:
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.slnx'
+      - '.github/workflows/dotnet-desktop.yml'
+  pull_request:
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - '**.slnx'
+      - '.github/workflows/dotnet-desktop.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore BlockIO.slnx
+
+    - name: Build solution
+      run: dotnet build BlockIO.slnx --configuration Release
+
+    #- name: Run tests (wenn vorhanden)
+    #  run: |
+     #   if exist Tests\BlockIO.Tests.csproj (
+     #     dotnet test Tests\BlockIO.Tests.csproj --configuration Release --no-build
+     #   )
