@@ -123,40 +123,33 @@ namespace BlockIO.GPT
             var header = new byte[m_sectorSize];
             _ = stream.Read(header, 0, (int)m_sectorSize);
 
-            // GPT Signatur prüfen
-            var signature = System.Text.Encoding.ASCII.GetString(header, 0, 8);
-            if (signature != "EFI PART")
-                throw new InvalidDataException("Kein GPT Header gefunden."); // "No GPT header found."
+            GptHeader _gptheader = GptHeader.FromBytes(header);
 
             // Wichtige Felder aus dem Header extrahieren
-            long partitionEntryLBA = BitConverter.ToInt64(header, 72);
-            int numEntries = BitConverter.ToInt32(header, 80);
-            int entrySize = BitConverter.ToInt32(header, 84);
+            ulong partitionEntryLBA = _gptheader.PartitionEntryLBA;
+            uint numEntries = _gptheader.NumberOfEntries;
+            uint entrySize = _gptheader.EntrySize;
 
             // Zu den Partitionseinträgen springen
-            stream.Seek(partitionEntryLBA * m_sectorSize, SeekOrigin.Begin);
-
+            stream.Seek((long)partitionEntryLBA * m_sectorSize, SeekOrigin.Begin);
 
             // Partitionseinträge auslesen
             for (int i = 0; i < numEntries; i++)    
             {
+                
                 var entry = new byte[entrySize];
-                _ = stream.Read(entry, 0, entrySize);
+                _ = stream.Read(entry, 0, (int)entrySize);
 
-                // Prüfen ob die Partition belegt ist
-                var typeGuid = new Guid(entry[0..16]);
-                if (typeGuid == Guid.Empty) continue;
-
-                var uniqueGuid = new Guid(entry[16..32]);
-                long firstLBA = BitConverter.ToInt64(entry, 32);
-                long lastLBA = BitConverter.ToInt64(entry, 40);
-                string name = System.Text.Encoding.Unicode.GetString(entry, 56, 72).TrimEnd('\0');
-
-                if (!IsValidPartitionEntry(typeGuid, firstLBA, lastLBA)) continue;
+                GptEntry _gptentry = GptEntry.FromBytes(entry);
+                if(_gptentry.IsValid == false)  
+                    continue;
 
 
                 // Partition zur Liste hinzufügen
-                m_partitions.Add(new GPTPartition(device, name, typeGuid, uniqueGuid, (ulong)firstLBA, (ulong)lastLBA, (int)m_sectorSize));
+                m_partitions.Add(new GPTPartition(device, _gptentry.Name, 
+                    _gptentry.TypeGuid, _gptentry.UniqueGuid, 
+                    _gptentry.FirstLBA, _gptentry.LastLBA, 
+                    (int)m_sectorSize));
             }
             PartitionCount = m_partitions.Count;
 
@@ -164,10 +157,6 @@ namespace BlockIO.GPT
             return [.. m_partitions];
         }
 
-        private static bool IsValidPartitionEntry(Guid typeGuid, long firstLBA, long lastLBA)
-        {
-            return typeGuid != Guid.Empty && firstLBA > 0 && lastLBA >= firstLBA;
-        }
 
 
         protected override uint GetSectorSize(string path)

@@ -13,6 +13,10 @@ using System.Text;
 
 namespace BlockIO
 {
+    /// <summary>
+    /// Provides a block-oriented stream for reading and writing raw partition data.
+    /// Wraps an <see cref="AbstractPartition"/> and enforces structural boundaries and alignment.
+    /// </summary>
     public class PartitionStream : Stream, IBlockStream
     {
         private AbstractPartition _partition;
@@ -28,7 +32,16 @@ namespace BlockIO
         /// </summary>
         public bool EnforceLengthAlignment { get; set; } = false;
 
-        #region Stream Overrides
+        /// <summary>
+        /// Gets the block size used for alignment and chunked I/O.
+        /// </summary>
+        public int BlockSize { get => _partition.SectorSize; }
+
+        /// <summary>
+        /// Initializes a new stream for the specified partition and access mode.
+        /// </summary>
+        /// <param name="partition">The partition to access.</param>
+        /// <param name="access">The desired access mode.</param>
         public PartitionStream(AbstractPartition partition, FileAccess access)
         {
             _partition = partition;
@@ -37,20 +50,25 @@ namespace BlockIO
             _syslength = (ulong)(partition.SectorCount * (uint)partition.SectorSize);
             _length = _syslength;
         }
-
+        #region Stream Overrides
+        /// <inheritdoc/>
         public override bool CanRead => (_access.HasFlag(FileAccess.Read) && _partition.Readable);
+        /// <inheritdoc/>
         public override bool CanWrite => (_access.HasFlag(FileAccess.Write) && _partition.Writable);
+        /// <inheritdoc/>
         public override bool CanSeek => true;
 
+        /// <inheritdoc/>
         public override long Length => (long)_length;
+        /// <inheritdoc/>
         public override long Position { get => (_position); set => _position = value; }
-        public int BlockSize { get => _partition.SectorSize;  }
-
+        
+        /// <inheritdoc/>
         public override void Flush()
         {
             ArchPartitionStream.FlushDevice(_partition.DevicePath);
         }
-
+        /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
             if(CanRead == false)
@@ -75,7 +93,7 @@ namespace BlockIO
             return bytesToRead;
         }
 
-
+        /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
             if(CanWrite == false)
@@ -100,7 +118,7 @@ namespace BlockIO
                 _partition.SectorSize
             );
         }
-
+        /// <inheritdoc/>
         public override void Write(ReadOnlySpan<byte> buffer)
         {
             if (CanWrite == false)
@@ -124,7 +142,7 @@ namespace BlockIO
             );
             _position += bytesToWrite;
         }
-
+        /// <inheritdoc/>
         public override void WriteByte(byte value)
         {
             if (CanWrite == false)
@@ -139,8 +157,8 @@ namespace BlockIO
                 _partition.SectorSize
             );
             _position += 1;
-        } 
-
+        }
+        /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
             if(CanSeek == false)    
@@ -167,11 +185,7 @@ namespace BlockIO
             return _position;
         }
         
-        protected bool isValidPosition(long position)
-        {
-            return position >= 0 && position <= Length;
-        }
-
+        /// <inheritdoc/>
         public override void SetLength(long value)
         { 
             if(value < 0 || value > (long)_syslength)
@@ -180,21 +194,36 @@ namespace BlockIO
         }
         #endregion
 
+        /// <summary>
+        /// Validates whether the given position is within the stream bounds.
+        /// </summary>
+        /// <param name="position">The byte offset to validate.</param>
+        /// <returns>True if valid; otherwise, false.</returns>
+        protected bool isValidPosition(long position)
+        {
+            return position >= 0 && position <= Length;
+        }
+
+        /// <summary>
+        /// Resets the stream position and length to the full partition range.
+        /// </summary>
         public void Reset()         {
             _length = _syslength;
             _position = 0;
         }
 
         #region IBlockStream Implementation
+        /// <inheritdoc/>
         public int GetCurrentBlockSize()
         {
             return _partition.SectorSize;
         }
-
+        /// <inheritdoc/>
         public Stream CreateSubStream()
         {
             return new PartitionStream(_partition, _access);
-        }  
+        }
+        /// <inheritdoc/>
         public Stream CreateSubStream(ulong offset, ulong? length, FileAccess? access)
         {
             if( offset + length > _syslength)

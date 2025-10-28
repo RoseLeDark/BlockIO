@@ -44,6 +44,7 @@ namespace BlockIO
         /// </summary>
         public override string Description => "A virtual partition representing the entire device.";
 
+        /// <inheritdoc/>
         protected override void OnCloned(AbstractPartition clone)
         {
         }
