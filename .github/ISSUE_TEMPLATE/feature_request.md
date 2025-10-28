@@ -1,30 +1,20 @@
-name: Feature Request
-description: Suggest a new structural feature or plugin interface
-labels: [enhancement]
-assignees: [RoseLeDark]
+---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
-## Summary
+**Is your feature request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-Describe the feature or capability you’d like to see.
+**Describe the solution you'd like**
+A clear and concise description of what you want to happen.
 
-## Motivation
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've considered.
 
-Why is this useful for BlockIO or its plugin ecosystem?
-
-## Scope
-
-- [ ] Core BlockIO
-- [ ] Plugin interface
-- [ ] Tooling / Manifest
-- [ ] YAML / Export
-- [ ] Other (please specify)
-
-## Constraints
-
-Are there architectural boundaries this must respect?
-
-## Additional Notes
-
-Any sketches, examples, or references?
+**Additional context**
+Add any other context or screenshots about the feature request here.
