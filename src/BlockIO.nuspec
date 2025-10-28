@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>BlockIO</id>
+    <version>0.4.2</version>
+    <authors>Amber-Sophia Schröck</authors>
+    <owners>Amber-Sophia Schröck</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">EUPL-1.2</license>
+    <licenseUrl>https://eupl.eu/1.2/en/</licenseUrl>
+    <projectUrl>https://github.com/RoseLeDark/BlockIO</projectUrl>
+    <description>
+      BlockIO is a modular, introspective .NET library for analyzing and repairing partition structures on Windows.
+      It provides a clean, extensible architecture for forensic tools, open repair workflows, and structure-level inspection — without filesystem logic.
+    </description>
+    <releaseNotes>
+      Initial release: Includes GPT support with GptHeader, GptEntry, GptEntryArray, CRC validation, YAML import/export, and manifest tooling.
+    </releaseNotes>
+    <tags>BlockIO GPT Partition Forensics Repair Windows YAML OpenSource</tags>
+    <repository type="git" url="https://github.com/RoseLeDark/BlockIO" />
+    <copyright>Copyright © Amber-Sophia Schröck 2025</copyright>
+  </metadata>
+  <files>
+    <file src="bin\Release\net10.0\BlockIO.dll" target="lib\net10.0" />
+    <file src="../LICENSE.md" target="" />
+    <file src="../README.md" target="" />
+  </files>
+</package>
