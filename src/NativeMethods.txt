@@ -1,0 +1,10 @@
+CreateFile
+SetFilePointerEx
+ReadFile
+WriteFile
+FlushFileBuffers
+CloseHandle
+GetFileSizeEx
+DeviceIoControl
+FlushFileBuffers
+DISK_GEOMETRY
