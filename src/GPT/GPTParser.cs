@@ -156,7 +156,7 @@ namespace BlockIO.GPT
 
 
                 // Partition zur Liste hinzufügen
-                m_partitions.Add(new GPTPartition(device, name, typeGuid, uniqueGuid, firstLBA, lastLBA, (int)m_sectorSize));
+                m_partitions.Add(new GPTPartition(device, name, typeGuid, uniqueGuid, (ulong)firstLBA, (ulong)lastLBA, (int)m_sectorSize));
             }
             PartitionCount = m_partitions.Count;
 

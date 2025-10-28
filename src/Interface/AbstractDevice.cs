@@ -71,7 +71,6 @@ namespace BlockIO.Interface
             SectorCount = GetMaxSectorCount(m_devicePath);
         }
 
-        }
         public abstract void Reset();
 
         public abstract void Close();

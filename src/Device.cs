@@ -10,7 +10,6 @@ namespace BlockIO
 {
     public class Device : AbstractDevice
     {
-        private DeviceType _deviceType;
         private List<AbstractPartition> m_partitions => [];
         protected DeviceType m_deviceType;
 
@@ -30,7 +29,7 @@ namespace BlockIO
 
         public override string Description => "GPT Device Handler";
 
-        public override DeviceType DeviceType => _deviceType;
+        public override DeviceType DeviceType => m_deviceType;
 
         public override void Close()
         {
