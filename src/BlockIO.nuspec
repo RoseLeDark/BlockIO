@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>BlockIO</id>
-    <version>0.4.2</version>
+    <version>1.0.0</version>
     <authors>Amber-Sophia Schröck</authors>
     <owners>Amber-Sophia Schröck</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -16,7 +16,7 @@
     <releaseNotes>
       Initial release: Includes GPT support with GptHeader, GptEntry, GptEntryArray, CRC validation, YAML import/export, and manifest tooling.
     </releaseNotes>
-    <tags>BlockIO GPT Partition Forensics Repair Windows YAML OpenSource</tags>
+    <tags>BlockIO GPT Partition Forensics Repair Windows YAML OpenSource Plugins</tags>
     <repository type="git" url="https://github.com/RoseLeDark/BlockIO" />
     <copyright>Copyright © Amber-Sophia Schröck 2025</copyright>
   </metadata>
