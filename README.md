@@ -45,9 +45,21 @@ Windows lacks a clean, managed way to access raw disk sectors, GPT/MBR headers, 
   Stream CloneAsWriteOnly();
   Stream CloneAsReadWrite();
 
-### Utilities
+### 🧠 Utilities
 
 HeaderUtility – GPT/MBR header parsing and validation
 
 BlockRange, StreamTraits, DeviceDescriptor – for analysis and tooling
-  
+
+
+### 🚀 Example
+
+var device = new Device("\.\\..", new GPTParser(), true);
+var partition = device.GetPartitionById(0);
+using var stream = partition.CreateStream(FileAccess.ReadWrite); // raw access to partition
+
+### 🧠 Philosophy
+
+BlockIO is not a filesystem library. It does not mount, interpret, or parse FAT, NTFS, ext4, or any other FS. It exposes structure, not content.
+
+
