@@ -63,3 +63,7 @@ using var stream = partition.CreateStream(FileAccess.ReadWrite); // raw access t
 BlockIO is not a filesystem library. It does not mount, interpret, or parse FAT, NTFS, ext4, or any other FS. It exposes structure, not content.
 
 
+## Lizenz
+
+Dieses Projekt steht unter der [European Union Public Licence v1.2 (EUPL-1.2)](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).  
+Siehe `LICENSES/EUPL-1.2.txt` für den vollständigen Text.
