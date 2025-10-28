@@ -2,6 +2,7 @@
 // This file is part of the BlockIO project.
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
+using BlockIO.Arch.BlockIO.Interface;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -20,17 +21,21 @@ namespace BlockIO.Arch.Windows
     /// </summary>
     [SupportedOSPlatform("windows")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Plattformkompatibilität überprüfen", Justification = "<Ausstehend>")]
-    internal static class WindowsPartitionStream
+    internal static class WindowsPartitionStream : IArchPartitionStream
     {
         private const UInt32 GENERIC_READ = 0x80000000;
         private const UInt32 GENERIC_WRITE = 0x40000000;
 
-        
+
 
         /// <summary>
-        /// Reads raw sectors from the device using overlapped chunked reads.
-        /// Chunk size is determined by ArchPartitionStream.BlockSize.
+        /// Reads raw sectors from the specified device using chunked overlapped reads.
         /// </summary>
+        /// <param name="devicePath">The path to the physical device (e.g., \\.\PhysicalDrive0).</param>
+        /// <param name="managedBuffer">The managed byte array to receive the read data.</param>
+        /// <param name="offsetLba">The starting offset in Logical Block Addressing (LBA) units.</param>
+        /// <param name="lenghtLBA">The number of sectors to read.</param>
+        /// <param name="SectorSize">The size of each sector in bytes.</param>
         public static unsafe void ReadRaw(string devicePath, byte[] managedBuffer, long offsetLba, long lenghtLBA, long SectorSize)
         {
             long totalBytesToRead = lenghtLBA * SectorSize;
@@ -76,9 +81,13 @@ namespace BlockIO.Arch.Windows
         }
 
         /// <summary>
-        /// Write raw sectors from the device using overlapped chunked written.
-        /// Chunk size is determined by ArchPartitionStream.BlockSize.
+        /// Writes raw sectors to the specified device using chunked overlapped writes.
         /// </summary>
+        /// <param name="devicePath">The path to the physical device (e.g., \\.\PhysicalDrive0).</param>
+        /// <param name="managedBuffer">The managed byte array containing the data to write.</param>
+        /// <param name="offsetLba">The starting offset in Logical Block Addressing (LBA) units.</param>
+        /// <param name="lenghtLBA">The number of sectors to write.</param>
+        /// <param name="SectorSize">The size of each sector in bytes.</param>
         public static unsafe void WriteRaw(string devicePath, byte[] managedBuffer, long offsetLba, long lenghtLBA, long SectorSize)
         {
             long totalBytesToWrite = lenghtLBA * SectorSize;
@@ -120,7 +129,11 @@ namespace BlockIO.Arch.Windows
                 }
             }
         }
-
+        /// <summary>
+        /// Checks whether the specified device is accessible for raw reading.
+        /// </summary>
+        /// <param name="devicePath">The path to the physical device.</param>
+        /// <returns>True if the device can be opened for reading; otherwise, false.</returns>
         public static bool IsRawDeviceAccessible(string devicePath)
         {
             using var handle = PInvoke.CreateFile(devicePath,
@@ -129,7 +142,11 @@ namespace BlockIO.Arch.Windows
                 0, null);
             return !handle.IsInvalid;
         }
-
+        /// <summary>
+        /// Checks whether the specified device is writable using raw access.
+        /// </summary>
+        /// <param name="devicePath">The path to the physical device.</param>
+        /// <returns>True if the device can be opened for writing; otherwise, false.</returns>
         public static bool IsRawDeviceWritable(string devicePath)
         {
             using var handle = PInvoke.CreateFile(devicePath,
@@ -138,7 +155,11 @@ namespace BlockIO.Arch.Windows
                 0, null);
             return !handle.IsInvalid;
         }
-
+        /// <summary>
+        /// Flushes all buffered data to the specified device.
+        /// </summary>
+        /// <param name="devicePath">The path to the physical device.</param>
+        /// <exception cref="IOException">Thrown if the device cannot be opened or flushed.</exception>
         public static void FlushDevice(string devicePath)
         {
             using var handle = PInvoke.CreateFile(devicePath,
@@ -155,7 +176,15 @@ namespace BlockIO.Arch.Windows
             }
 
         }
-
+        /// <summary>
+        /// Attempts to discard the device's internal cache by flushing buffers.
+        /// </summary>
+        /// <param name="devicePath">The path to the physical device.</param>
+        /// <remarks>
+        /// Windows does not support explicit cache discard like Linux's BLKDISCARD.
+        /// This method uses FlushFileBuffers as the closest available operation.
+        /// </remarks>
+        /// <exception cref="IOException">Thrown if the device cannot be opened or flushed.</exception>
         public static void DiscardDeviceCache(string devicePath)
         {
             using var handle = PInvoke.CreateFile(devicePath,
@@ -174,7 +203,11 @@ namespace BlockIO.Arch.Windows
             }
         }
 
-
+        /// <summary>
+        /// Flushes the device's write cache to ensure data integrity.
+        /// </summary>
+        /// <param name="devicePath">The path to the physical device.</param>
+        /// <exception cref="IOException">Thrown if the device cannot be opened or flushed.</exception>
         public static void FlushDeviceCache(string devicePath)
         {
             using SafeFileHandle handle = PInvoke.CreateFile(devicePath,

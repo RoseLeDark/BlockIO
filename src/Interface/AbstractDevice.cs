@@ -2,6 +2,7 @@
 // This file is part of the BlockIO project.
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
+using BlockIO.Arch;
 using BlockIO.Arch.Windows;
 using BlockIO.Interface.License;
 using System.Runtime.InteropServices;
@@ -9,17 +10,65 @@ using System.Runtime.InteropServices;
 
 namespace BlockIO.Interface
 {
+    /// <summary>
+    /// Represents the structural classification of a storage device.
+    /// Used to determine how the device should be handled or instantiated within the system.
+    /// </summary>
     public enum DeviceType
     {
-        Unknowm = 0,
+        /// <summary>
+        /// The device type could not be determined.
+        /// </summary>
+        Unknown = 0,
+
+        /// <summary>
+        /// A solid-state drive (SSD) device.
+        /// </summary>
         SSD,
+
+        /// <summary>
+        /// A Non-Volatile Memory Express (NVMe) device.
+        /// </summary>
         NVMe,
+
+        /// <summary>
+        /// A fixed hard disk drive (HDD) or internal storage.
+        /// </summary>
         Fixed,
+
+        /// <summary>
+        /// Alias for <see cref="Fixed"/> — represents a traditional hard disk drive.
+        /// </summary>
         HDD = Fixed,
+
+        /// <summary>
+        /// A file-based device, such as a disk image (e.g., VHD, VHDX).
+        /// </summary>
         File,
+
+        /// <summary>
+        /// A RAM-backed virtual device (e.g., RAM disk).
+        /// </summary>
         RAMDevice,
-        Lo,
+
+        /// <summary>
+        /// A loopback or virtual device (e.g., mounted via software).
+        /// </summary>
+        Removable,
+
+        /// <summary>
+        /// A USB-connected removable device.
+        /// </summary>
         USB,
+
+        /// <summary>
+        /// A Virtual Hard Disk (VHD) device.
+        /// </summary>
+        VHD,
+
+        /// <summary>
+        /// Any other device type not explicitly classified.
+        /// </summary>
         Other
     }
     public class AbstractDeviceLockScope : IDisposable
@@ -120,13 +169,11 @@ namespace BlockIO.Interface
         {
             uint _sektorSize = 512; // Standard Sektorgröße
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                string errorString = string.Empty;
-                _sektorSize = WindowsDriveInfo.GetSectorSize(path, ref errorString);
-                if (_sektorSize == 0)
-                    throw new InvalidOperationException(errorString);
-            }
+            string errorString = string.Empty;
+            _sektorSize = ArchDriveInfo.GetSectorSize(path, ref errorString);
+            if (_sektorSize == 0)
+                throw new InvalidOperationException(errorString);
+            
             return _sektorSize;
         }
 
@@ -134,14 +181,11 @@ namespace BlockIO.Interface
         {
             ulong maxSectorCount = 0;
             string errorString = string.Empty;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                maxSectorCount = WindowsDriveInfo.GetMaxLBA(path, ref errorString) + 1; // LBA ist 0-basiert, daher +1 für die tatsächliche Anzahl
-                if (maxSectorCount == 0)
-                    throw new InvalidOperationException(errorString);
-            }
-            return maxSectorCount;
 
+            maxSectorCount = ArchDriveInfo.GetMaxLBA(path, ref errorString) + 1; // LBA ist 0-basiert, daher +1 für die tatsächliche Anzahl
+            if (maxSectorCount == 0)
+                throw new InvalidOperationException(errorString);
+            return maxSectorCount;
         }
     }
 }

@@ -33,12 +33,22 @@ namespace BlockIO.Plugin
     /// </example>
     public sealed class PluginLoader
     {
+        /// <summary>
+        /// Gets the list of successfully loaded plugins.
+        /// </summary>
         public List<IBlockIOPlugin> Plugins { get; } = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PluginLoader"/> class.
+        /// </summary>
         public PluginLoader()
         {
         }
 
+        /// <summary>
+        /// Loads all plugin assemblies from the specified directory.
+        /// </summary>
+        /// <param name="path">The directory path containing plugin DLLs.</param>
         public void LoadFromDirectory(string path)
         {
             if (!Directory.Exists(path)) return;
@@ -47,6 +57,11 @@ namespace BlockIO.Plugin
                 Plugins.AddRange(LoadFromAssembly(file));
         }
 
+        /// <summary>
+        /// Loads plugins from a single assembly file.
+        /// </summary>
+        /// <param name="assemblyPath">The full path to the assembly file.</param>
+        /// <returns>A list of instantiated <see cref="IBlockIOPlugin"/> implementations.</returns>
         public List<IBlockIOPlugin> LoadFromAssembly(string assemblyPath)
         {
             var result = new List<IBlockIOPlugin>();
@@ -69,19 +84,33 @@ namespace BlockIO.Plugin
             return result;
         }
 
+        /// <summary>
+        /// Clears all loaded plugins from memory.
+        /// </summary>
         public void ClearPlugins()
         {
             Plugins.Clear();
         }
 
+        /// <summary>
+        /// Aggregates all parsers provided by loaded plugins.
+        /// </summary>
+        /// <returns>An enumerable of <see cref="AbstractParser"/> instances.</returns>
         public IEnumerable<AbstractParser> GetAllParsers()
         {
             return Plugins.SelectMany(p => p.GetParsers());
         }
+        /// <summary>
+        /// Aggregates all devices provided by loaded plugins.
+        /// </summary>
+        /// <returns>An enumerable of <see cref="AbstractDevice"/> instances.</returns>
         public IEnumerable<AbstractDevice> GetAllDevices()
         {
             return Plugins.SelectMany(p => p.GetDevices());
         }
+        /// <summary>
+        /// Disposes the loader by clearing all loaded plugins.
+        /// </summary>
         public void Dispose()
         {
             ClearPlugins();

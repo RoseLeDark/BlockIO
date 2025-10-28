@@ -13,6 +13,13 @@ using Windows.Win32.System.Ioctl;
 
 namespace BlockIO.Arch.Windows
 {
+    /// <summary>
+    /// Provides low-level access to physical disk information on Windows platforms,
+    /// including geometry, sector size, device type, and logical block addressing.
+    /// </summary>
+    /// <remarks>
+    /// This class is intended for structural analysis only. It does not interpret partition layouts or file systems.
+    /// </remarks>
     [SupportedOSPlatform("windows")]
     internal static class WindowsDriveInfo
     {
@@ -27,10 +34,15 @@ namespace BlockIO.Arch.Windows
         [StructLayout(LayoutKind.Sequential)]
         public struct DISK_GEOMETRY
         {
+            /// <summary>Number of cylinders on the disk.</summary>
             public long Cylinders;
+            /// <summary>Type of media (e.g., fixed, removable).</summary>
             public MEDIA_TYPE MediaType;
+            /// <summary>Number of tracks per cylinder.</summary>
             public uint TracksPerCylinder;
+            /// <summary>Number of sectors per track.</summary>
             public uint SectorsPerTrack;
+            /// <summary>Number of bytes per sector.</summary>
             public uint BytesPerSector;
         }
 
@@ -54,10 +66,6 @@ namespace BlockIO.Arch.Windows
         /// <param name="path">The device path (e.g., \\.\PhysicalDrive0).</param>
         /// <param name="errorstring">Returns error details if the query fails.</param>
         /// <returns>Sector size in bytes, or 0 if retrieval fails.</returns>
-        /// <remarks>
-        /// This method uses IOCTL_DISK_GET_DRIVE_GEOMETRY to query the device.
-        /// The result reflects the physical block size used for LBA addressing.
-        /// </remarks>
         internal static unsafe uint GetSectorSize(string path, ref string errorstring)
         {
             using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -87,7 +95,12 @@ namespace BlockIO.Arch.Windows
             errorstring = "The sector size cannot be retrieved from the device. Win32error code: " + Marshal.GetLastWin32Error().ToString();
             return 0;
         }
-
+        /// <summary>
+        /// Checks whether the specified device path is a valid physical drive and not currently managed by Windows.
+        /// </summary>
+        /// <param name="path">The device path to validate.</param>
+        /// <param name="errorString">Returns error details if validation fails.</param>
+        /// <returns>True if the device can be parsed; otherwise, false.</returns>
         internal static bool CanParse(string path, ref string errorString)
         {
             if (!path.StartsWith(@"\\.\PhysicalDrive"))
@@ -144,30 +157,39 @@ namespace BlockIO.Arch.Windows
 
             return _ret;
         }
-
-        public static DeviceType GetDeviceType(string path)
+        /// <summary>
+        /// Identifies the type of device based on its interface and media characteristics.
+        /// </summary>
+        /// <param name="path">The device path to evaluate.</param>
+        /// <returns>The detected <see cref="DeviceType"/> (e.g., USB, SSD, NVMe, Fixed, File, Unknown).</returns>
+        internal static DeviceType GetDeviceType(string path)
         {
-            using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
+            if (File.Exists(path))
+            {
+                string ext = Path.GetExtension(path).ToLowerInvariant();
+                if (ext == ".vhd" || ext == ".vhdx") return DeviceType.VHD; // oder DeviceType.VHD wenn du das ergänzt
+                return DeviceType.File;
+            }
 
+            using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
             foreach (ManagementObject drive in searcher.Get())
             {
                 string? deviceId = drive["DeviceID"]?.ToString();
-                if (deviceId == path)
-                {
-                    string mediaType = drive["MediaType"]?.ToString() ?? "Unbekannt";
-                    string interfaceType = drive["InterfaceType"]?.ToString() ?? "Unbekannt";
+                if (deviceId != path) continue;
 
-                    if (interfaceType == "USB") return DeviceType.USB;
-                    if (mediaType.Contains("SSD", StringComparison.OrdinalIgnoreCase)) return DeviceType.SSD;
-                    if (mediaType.Contains("NVMe", StringComparison.OrdinalIgnoreCase)) return DeviceType.NVMe;
-                    if (mediaType.Contains("Fixed", StringComparison.OrdinalIgnoreCase)) return DeviceType.Fixed;
+                string mediaType = drive["MediaType"]?.ToString() ?? "";
+                string interfaceType = drive["InterfaceType"]?.ToString() ?? "";
 
-                }
+                if (interfaceType == "USB") return DeviceType.USB;
+                if (mediaType.Contains("SSD", StringComparison.OrdinalIgnoreCase)) return DeviceType.SSD;
+                if (mediaType.Contains("NVMe", StringComparison.OrdinalIgnoreCase)) return DeviceType.NVMe;
+                if (mediaType.Contains("Fixed", StringComparison.OrdinalIgnoreCase)) return DeviceType.Fixed;
+                if (mediaType.Contains("Removable", StringComparison.OrdinalIgnoreCase)) return DeviceType.Removable;
+
+                return DeviceType.Other;
             }
 
-            if (File.Exists(path)) return DeviceType.File;
-
-            return DeviceType.Unknowm;
+            return DeviceType.Unknown;
         }
 
         /// <summary>
