@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
-using System.Text;
-
-namespace BlockIO.GPT
+﻿namespace BlockIO.GPT
 {
     public class GPTLayoutBuilder
     {

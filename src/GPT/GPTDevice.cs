@@ -17,7 +17,7 @@ namespace BlockIO.GPT
         /// <param name="bInitialisOnConstruct">
         /// If true, calls <see cref="Device.Initialis"/> during construction to immediately parse partitions.
         /// </param>
-        public GPTDevice(string devicePath, bool bInitialisOnConstruct = false) 
+        public GPTDevice(string devicePath, bool bInitialisOnConstruct = false)
             : base(devicePath, new GPTParser(), bInitialisOnConstruct)
         {
         }

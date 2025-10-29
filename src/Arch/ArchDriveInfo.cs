@@ -3,12 +3,8 @@
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
 using BlockIO.Arch.Windows;
-using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using BlockIO.Interface;
+using System.Runtime.InteropServices;
 
 namespace BlockIO.Arch
 {
@@ -23,8 +19,8 @@ namespace BlockIO.Arch
             }
             return sektorSize;
         }
-        internal static bool CanParse(string path, ref string errorString) 
-        {             
+        internal static bool CanParse(string path, ref string errorString)
+        {
             bool canParse = false;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -42,7 +38,7 @@ namespace BlockIO.Arch
             return deviceType;
         }
         internal static ulong GetMaxLBA(string devicePath, ref string errorString)
-        {             
+        {
             ulong maxLBA = 0;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

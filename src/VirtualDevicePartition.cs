@@ -2,12 +2,8 @@
 // This file is part of the BlockIO project.
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
-using BlockIO.GPT;
 using BlockIO.Interface;
 using BlockIO.Interface.License;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BlockIO
 {
@@ -22,7 +18,7 @@ namespace BlockIO
         /// </summary>
         /// <param name="device">The underlying device to wrap.</param>
         public VirtualDevicePartition(AbstractDevice device)
-            : base(device, "VDevPart:" + device.Name)        { }
+            : base(device, "VDevPart:" + device.Name) { }
 
         /// <summary>
         /// Gets the version information for this partition implementation.

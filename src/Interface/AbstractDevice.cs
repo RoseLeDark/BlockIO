@@ -3,9 +3,7 @@
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
 using BlockIO.Arch;
-using BlockIO.Arch.Windows;
 using BlockIO.Interface.License;
-using System.Runtime.InteropServices;
 
 
 namespace BlockIO.Interface
@@ -292,7 +290,7 @@ namespace BlockIO.Interface
             _sektorSize = ArchDriveInfo.GetSectorSize(path, ref errorString);
             if (_sektorSize == 0)
                 throw new InvalidOperationException(errorString);
-            
+
             return _sektorSize;
         }
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BlockIO.GPT
+﻿namespace BlockIO.GPT
 {
     public static class GptManifestValidator
     {

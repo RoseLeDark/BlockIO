@@ -2,12 +2,9 @@
 // This file is part of the BlockIO project.
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 using BlockIO.Interface;
-using System;
-using System.Collections.Generic;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Text;
 using Windows.Win32;
 using Windows.Win32.System.Ioctl;
 
@@ -82,7 +79,7 @@ namespace BlockIO.Arch.Windows
                 &geometry,
                 (uint)Marshal.SizeOf<DISK_GEOMETRY>(),
                 &bytesReturned,
-                null );
+                null);
 
             m_geometry = geometry;
 
@@ -227,7 +224,7 @@ namespace BlockIO.Arch.Windows
             if (!sizeSuccess)
             {
                 errorString = ("Unable to retrieve disk size. Win32 error: " + Marshal.GetLastWin32Error());
-                return 0; 
+                return 0;
             }
             // Get sector size
             DISK_GEOMETRY geometry;

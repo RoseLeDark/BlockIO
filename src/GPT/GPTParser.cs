@@ -5,10 +5,7 @@
 using BlockIO.Arch.Windows;
 using BlockIO.Interface;
 using BlockIO.Interface.License;
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace BlockIO.GPT
@@ -21,7 +18,7 @@ namespace BlockIO.GPT
     /// for determining sector size and parsing GPT partition information. It manages the device path and sector size,
     /// and initializes the partition list by reading the GPT header and entries from the specified device. Derived
     /// classes must implement the method for retrieving the sector size appropriate to the device type.</remarks>
-    public class GPTParser  : AbstractParser
+    public class GPTParser : AbstractParser
     {
         /// <summary>
         /// Represents the size, in bytes, of a sector used by the derived class.
@@ -60,10 +57,10 @@ namespace BlockIO.GPT
         {
             m_devicePath = devicePath;
         }
-        
-        public List<AbstractPartition> GetPartitions() 
+
+        public List<AbstractPartition> GetPartitions()
         {
-            return [.. m_partitions];  
+            return [.. m_partitions];
         }
 
 
@@ -111,9 +108,9 @@ namespace BlockIO.GPT
             using var stream = new FileStream(m_devicePath, FileMode.Open, FileAccess.Read);
 
             string errorString = string.Empty;
-            if (CanParse(stream, ref errorString) == false) 
+            if (CanParse(stream, ref errorString) == false)
                 throw new InvalidOperationException(errorString);
-            
+
             m_sectorSize = sectorSize == 0 ? GetSectorSize(m_devicePath) : sectorSize;
 
             m_partitions.Clear();
@@ -134,21 +131,21 @@ namespace BlockIO.GPT
             stream.Seek((long)partitionEntryLBA * m_sectorSize, SeekOrigin.Begin);
 
             // Partitionseinträge auslesen
-            for (int i = 0; i < numEntries; i++)    
+            for (int i = 0; i < numEntries; i++)
             {
-                
+
                 var entry = new byte[entrySize];
                 _ = stream.Read(entry, 0, (int)entrySize);
 
                 GptEntry _gptentry = GptEntry.FromBytes(entry);
-                if(_gptentry.IsValid == false)  
+                if (_gptentry.IsValid == false)
                     continue;
 
 
                 // Partition zur Liste hinzufügen
-                m_partitions.Add(new GPTPartition(device, _gptentry.Name, 
-                    _gptentry.TypeGuid, _gptentry.UniqueGuid, 
-                    _gptentry.FirstLBA, _gptentry.LastLBA, 
+                m_partitions.Add(new GPTPartition(device, _gptentry.Name,
+                    _gptentry.TypeGuid, _gptentry.UniqueGuid,
+                    _gptentry.FirstLBA, _gptentry.LastLBA,
                     (int)m_sectorSize));
             }
             PartitionCount = m_partitions.Count;
@@ -167,7 +164,7 @@ namespace BlockIO.GPT
             {
                 string errorString = string.Empty;
                 _sektorSize = WindowsDriveInfo.GetSectorSize(path, ref errorString);
-                if(_sektorSize == 0)
+                if (_sektorSize == 0)
                     throw new InvalidOperationException(errorString);
             }
             return _sektorSize;

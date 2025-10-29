@@ -3,9 +3,6 @@
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
 using BlockIO.Interface.License;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BlockIO.Interface
 {

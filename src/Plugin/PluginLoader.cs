@@ -2,12 +2,8 @@
 // This file is part of the BlockIO project.
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using BlockIO.Interface;
+using System.Reflection;
 
 #if BLOCKIO_PLUGIN_SUPPORT
 
@@ -115,7 +111,7 @@ namespace BlockIO.Plugin
         {
             ClearPlugins();
         }
-        
+
     }
 }
 #endif

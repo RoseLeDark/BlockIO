@@ -3,11 +3,7 @@
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
 using BlockIO.Arch.Windows;
-using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 
 namespace BlockIO.Arch
@@ -229,7 +225,7 @@ namespace BlockIO.Arch
         /// <returns>True if the device can be opened for reading; otherwise, false.</returns>
         public static bool IsRawDeviceAccessible(string devicePath)
         {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return WindowsPartitionStream.IsRawDeviceAccessible(devicePath);
             }
@@ -245,7 +241,7 @@ namespace BlockIO.Arch
         /// <returns>True if the device can be opened for writing; otherwise, false.</returns>
         public static bool IsRawDeviceWritable(string devicePath)
         {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return WindowsPartitionStream.IsRawDeviceWritable(devicePath);
             }
@@ -260,7 +256,7 @@ namespace BlockIO.Arch
         /// <param name="devicePath">The path to the physical device.</param>
         public static void FlushDevice(string devicePath)
         {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 WindowsPartitionStream.FlushDevice(devicePath);
             }
@@ -276,7 +272,7 @@ namespace BlockIO.Arch
         /// <param name="devicePath">The path to the physical device.</param>
         public static void DiscardDeviceCache(string devicePath)
         {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 WindowsPartitionStream.DiscardDeviceCache(devicePath);
             }
@@ -292,7 +288,7 @@ namespace BlockIO.Arch
         /// <param name="devicePath">The path to the physical device.</param>
         public static void FlushDeviceCache(string devicePath)
         {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 WindowsPartitionStream.FlushDeviceCache(devicePath);
             }

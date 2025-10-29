@@ -2,16 +2,10 @@
 // This file is part of the BlockIO project.
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
-using BlockIO.Arch;
-using BlockIO.Interface;
 using Microsoft.Win32.SafeHandles;
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Text;
 using Windows.Win32;
-using Windows.Win32.Security;
 using Windows.Win32.Storage.FileSystem;
 
 namespace BlockIO.Arch.Windows
@@ -22,7 +16,7 @@ namespace BlockIO.Arch.Windows
     /// </summary>
     [SupportedOSPlatform("windows")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Plattformkompatibilität überprüfen", Justification = "<Ausstehend>")]
-    internal static class WindowsPartitionStream 
+    internal static class WindowsPartitionStream
     {
         private const UInt32 GENERIC_READ = 0x80000000;
         private const UInt32 GENERIC_WRITE = 0x40000000;

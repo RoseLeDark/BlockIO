@@ -6,6 +6,20 @@
     <Nullable>enable</Nullable>
     <SignAssembly>False</SignAssembly>
     <PackageLicenseExpression>EUPL-1.2</PackageLicenseExpression>
+    <Authors>Amber-Sophia Schröck</Authors>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <AssemblyVersion>0.4.3.0</AssemblyVersion>
+    <RepositoryUrl>https://github.com/RoseLeDark/BlockIO.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/RoseLeDark/BlockIO</PackageProjectUrl>
+    <Description>BlockIO is a modular, introspective .NET library for analyzing and repairing partition structures on Windows.
+It provides a clean, extensible architecture for forensic tools, open repair workflows, and structure-level inspection — without filesystem logic.</Description>
+		<copyright>Copyright © Amber-Sophia Schröck 2025</copyright>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>RoseLeDark.BlockIO</PackageId>
+    <Version>0.4.3</Version>
+    <PackageTags>BlockIO;GPT;Partition;Forensics;Repair;Windows;YAML;OpenSource;Plugins</PackageTags>
+    <PackageReleaseNotes>0.4.3 public version</PackageReleaseNotes>
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,6 +29,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>$(DefineConstants);BLOCKIO_PLUGIN_SUPPORT</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.228">

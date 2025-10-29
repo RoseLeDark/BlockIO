@@ -3,13 +3,8 @@
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 
 using BlockIO.Arch;
-using BlockIO.Arch.Windows;
 using BlockIO.Interface;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace BlockIO
 {
@@ -62,7 +57,7 @@ namespace BlockIO
         public override long Length => (long)_length;
         /// <inheritdoc/>
         public override long Position { get => (_position); set => _position = value; }
-        
+
         /// <inheritdoc/>
         public override void Flush()
         {
@@ -71,7 +66,7 @@ namespace BlockIO
         /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(CanRead == false)
+            if (CanRead == false)
                 throw new UnauthorizedAccessException("The partition does not support read access.");
 
             if (EnforceLengthAlignment && (count % ArchPartitionStream.BlockSize != 0))
@@ -96,7 +91,7 @@ namespace BlockIO
         /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if(CanWrite == false)
+            if (CanWrite == false)
                 throw new UnauthorizedAccessException("The partition does not support write access.");
 
             if (EnforceLengthAlignment && (count % ArchPartitionStream.BlockSize != 0))
@@ -104,8 +99,8 @@ namespace BlockIO
 
             long partitionOffset = (long)_partition.StartSector * _partition.SectorSize + _position;
 
-            if(isValidPosition(partitionOffset) == false)
-                throw new ArgumentOutOfRangeException(nameof(offset), "The write operation exceeds the partition boundaries."); 
+            if (isValidPosition(partitionOffset) == false)
+                throw new ArgumentOutOfRangeException(nameof(offset), "The write operation exceeds the partition boundaries.");
 
             uint bytesToWrite = Math.Min((uint)count, ((uint)Length - (uint)_position));
 
@@ -161,7 +156,7 @@ namespace BlockIO
         /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if(CanSeek == false)    
+            if (CanSeek == false)
                 throw new NotSupportedException("The partition does not support seeking.");
 
             switch (origin)
@@ -177,18 +172,18 @@ namespace BlockIO
                     break;
             }
 
-            if(_position < 0)
+            if (_position < 0)
                 _position = 0;
-            if(_position > Length)
+            if (_position > Length)
                 _position = Length;
 
             return _position;
         }
-        
+
         /// <inheritdoc/>
         public override void SetLength(long value)
-        { 
-            if(value < 0 || value > (long)_syslength)
+        {
+            if (value < 0 || value > (long)_syslength)
                 throw new ArgumentOutOfRangeException(nameof(value), "The specified length is out of partition bounds.");
             _length = (ulong)value;
         }
@@ -207,7 +202,8 @@ namespace BlockIO
         /// <summary>
         /// Resets the stream position and length to the full partition range.
         /// </summary>
-        public void Reset()         {
+        public void Reset()
+        {
             _length = _syslength;
             _position = 0;
         }
@@ -226,7 +222,7 @@ namespace BlockIO
         /// <inheritdoc/>
         public Stream CreateSubStream(ulong offset, ulong? length, FileAccess? access)
         {
-            if( offset + length > _syslength)
+            if (offset + length > _syslength)
                 throw new ArgumentOutOfRangeException("The specified offset and length are out of partition bounds.");
 
             var stream = new PartitionStream(_partition, access.HasValue ? access.Value : _access);
@@ -236,7 +232,7 @@ namespace BlockIO
             {
                 stream.SetLength((long)length.Value);
             }
-            
+
             return stream;
         }
         #endregion

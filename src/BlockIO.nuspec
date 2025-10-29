@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>BlockIO</id>
-    <version>1.0.0</version>
+    <id>RoseLeDark.BlockIO</id>
+    <version>0.4.3</version>
     <authors>Amber-Sophia Schröck</authors>
     <owners>Amber-Sophia Schröck</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

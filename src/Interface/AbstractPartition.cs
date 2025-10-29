@@ -36,7 +36,7 @@ namespace BlockIO.Interface
     /// internal synchronization object. Instances can be locked to restrict access, and the class implements
     /// IDisposable to release locks when no longer needed. Partition streams can be created for reading or writing,
     /// subject to access permissions and lock state.</remarks>
-    public abstract class AbstractPartition :  IDisposable, IMetaInfo, ICloneable
+    public abstract class AbstractPartition : IDisposable, IMetaInfo, ICloneable
     {
         /// <summary>
         /// Internal synchronization object used for structural locking.
@@ -145,7 +145,7 @@ namespace BlockIO.Interface
             Readable = true;
             Locked = false;
 
-            this.Name = Name;   
+            this.Name = Name;
             this.TypeGuid = typeGuid;
             this.UniqueGuid = uniqueGuid;
 
@@ -193,7 +193,7 @@ namespace BlockIO.Interface
         public PartitionStream CreateStream(FileAccess access)
         {
 
-            
+
             if (Locked || !Readable && access == FileAccess.Read || !Writable && access == FileAccess.Write)
                 throw new UnauthorizedAccessException("Partition is locked or access not allowed.");
 
@@ -206,7 +206,7 @@ namespace BlockIO.Interface
         {
             if (Locked) throw new InvalidOperationException("Partition is locked or access not allowed.");
 
-            if(this.Parent != null)
+            if (this.Parent != null)
                 throw new InvalidOperationException("Cloning of sub-partitions is not supported.");
 
             var clone = (AbstractPartition)this.MemberwiseClone();

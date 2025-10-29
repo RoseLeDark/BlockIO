@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 namespace BlockIO.GPT
 {
@@ -97,7 +95,7 @@ namespace BlockIO.GPT
         /// <exception cref="InvalidOperationException">Thrown if array is full.</exception>
         public void AddEntry(GptEntry entry)
         {
-            if(!entry.IsValid)
+            if (!entry.IsValid)
                 throw new ArgumentException("Invalid GPT entry.");
             if (Entries.Count >= 128)
                 throw new InvalidOperationException("GPT entry array is full.");

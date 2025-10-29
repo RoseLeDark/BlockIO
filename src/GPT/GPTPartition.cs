@@ -3,15 +3,12 @@
 // Copyright © 2025 Amber-Sophia Schröck <ambersophia.schroeck@gmail.com>
 using BlockIO.Interface;
 using BlockIO.Interface.License;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BlockIO.GPT
 {
     internal class GPTPartition : AbstractPartition
     {
-        public GPTPartition(AbstractDevice device, string Name, Guid typeGuid, Guid uniqueGuid, ulong firstSector, ulong lastSector, int sectorSize) 
+        public GPTPartition(AbstractDevice device, string Name, Guid typeGuid, Guid uniqueGuid, ulong firstSector, ulong lastSector, int sectorSize)
             : base(device, Name + "_GPT", typeGuid, uniqueGuid, firstSector, lastSector, sectorSize)
         {
         }

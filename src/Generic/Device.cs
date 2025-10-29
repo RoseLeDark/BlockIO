@@ -33,7 +33,7 @@ namespace BlockIO.Generic
         public Device(string devicePath, AbstractParser parser, bool bInitialisOnConstruct = false)
             : base(devicePath, parser)
         {
-            if(bInitialisOnConstruct) 
+            if (bInitialisOnConstruct)
                 Initialis();
         }
 
@@ -53,7 +53,7 @@ namespace BlockIO.Generic
         /// </summary>
         public override void Close()
         {
-            if(m_bLocked)
+            if (m_bLocked)
             {
                 Unlock();
             }
@@ -75,12 +75,12 @@ namespace BlockIO.Generic
         /// <returns>A <see cref="DeviceType"/> value.</returns>
         protected virtual DeviceType GetDeviceType()
         {
-            if(System.IO.File.Exists(m_devicePath))
+            if (System.IO.File.Exists(m_devicePath))
                 return DeviceType.File;
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return WindowsDriveInfo.GetDeviceType(m_devicePath);
             else
-                return  DeviceType.Other;
+                return DeviceType.Other;
         }
 
         /// <summary>
@@ -90,9 +90,9 @@ namespace BlockIO.Generic
         /// <returns>The matching partition, or null if not found.</returns>
         public override AbstractPartition? GetPartitionByGuid(Guid guid)
         {
-            foreach(var part in m_partitions)
+            foreach (var part in m_partitions)
             {
-                if(part.UniqueGuid == guid)
+                if (part.UniqueGuid == guid)
                 {
                     return part;
                 }
@@ -107,9 +107,9 @@ namespace BlockIO.Generic
         /// <returns>The matching partition, or null if not found.</returns>
         public override AbstractPartition? GetPartitionById(int id)
         {
-            foreach(var part in m_partitions)
+            foreach (var part in m_partitions)
             {
-                if(part.Id == id)
+                if (part.Id == id)
                 {
                     return part;
                 }

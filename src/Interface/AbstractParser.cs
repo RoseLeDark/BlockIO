@@ -15,7 +15,7 @@ namespace BlockIO.Interface
         /// <summary>
         /// Gets the device path used to identify the device instance.
         /// </summary>
-        public abstract string Path { get;  }
+        public abstract string Path { get; }
 
         /// <summary>
         /// Gets the size, in bytes, of a single sector on the underlying storage device.
