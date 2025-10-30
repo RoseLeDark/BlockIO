@@ -1,5 +1,7 @@
-﻿using BlockIO.GPT;
-using BlockIO.Arch.Windows;
+﻿using BlockIO.Arch.Windows;
+using BlockIO.GPT;
+using System.Buffers.Binary;
+using System.IO.Hashing;
 
 namespace BlockIO.GPT
 {
@@ -8,17 +10,28 @@ namespace BlockIO.GPT
     /// </summary>
     public static class GptDeviceWriter
     {
+        //TODO: ADD TO UTILS CLASS
+        private static uint CreateCRC32(byte[] buffer)
+        {
+            var span = buffer.AsSpan();
+            BinaryPrimitives.WriteUInt32LittleEndian(span.Slice(16, 4), 0);
+
+            var crc32 = new System.IO.Hashing.Crc32();
+            crc32.Append(span);
+            return crc32.GetCurrentHashAsUInt32();
+        }
+
         /// <summary>
         /// Writes a default GPT header, empty partition entry array, and backup header to the device.
         /// </summary>
         /// <param name="stream">The GPT-capable device stream.</param>
         public static void WriteDefaultGpt(GPTDeviceStream stream)
         {
-            var sectorSize = stream.Partition.SectorSize;
-            var sectorCount = stream.Partition.SectorCount;
+            var sectorSize = stream.SectorSize;
+            var sectorCount = stream.Device.SectorCount;
 
             // 1. Protective MBR at sector 0
-            var protectiveMbr = ProtectiveMBR.Create(sectorSize, sectorCount);
+            var protectiveMbr = ProtectiveMBR.Create((ulong)sectorSize, sectorCount);
             stream.WriteSector(0, protectiveMbr);
 
             // 2. Primary GPT header
@@ -29,7 +42,8 @@ namespace BlockIO.GPT
 
             // 3. Empty partition entry array (sectors 2–33)
             var entryArray = new byte[header.NumberOfEntries * header.EntrySize];
-            header.PartitionArrayCRC32 = Crc32Helper.Compute(entryArray);
+
+            header.PartitionArrayCRC32 = CreateCRC32(entryArray);
             var entrySectors = entryArray.Length / (int)sectorSize;
 
             for (int i = 0; i < entrySectors; i++)

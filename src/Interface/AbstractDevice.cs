@@ -254,7 +254,7 @@ namespace BlockIO.Interface
         /// <returns>A <see cref="DeviceStream"/> instance.</returns>
         public DeviceStream CreateDevicenStream(FileAccess access)
         {
-            return new DeviceStream(this, access);
+            return new DeviceStream(this, 0, access);
         }
 
         /// <summary>

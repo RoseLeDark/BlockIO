@@ -30,7 +30,7 @@ namespace BlockIO.Generic
         /// <param name="devicePath">The device path used for access.</param>
         /// <param name="parser">The parser responsible for partition discovery.</param>
         /// <param name="bInitialisOnConstruct">If true, calls <see cref="Initialis"/> during construction.</param>
-        public Device(string devicePath, AbstractParser parser, bool bInitialisOnConstruct = false)
+        public BaseDevice(string devicePath, AbstractParser parser, bool bInitialisOnConstruct = false)
             : base(devicePath, parser)
         {
             if (bInitialisOnConstruct)
