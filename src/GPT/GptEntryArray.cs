@@ -221,5 +221,9 @@ namespace BlockIO.GPT
             return FromYaml(yaml);
         }
 
+        internal static GptEntryArray FromBytes(byte[] buffer, uint numberOfEntries, uint entrySize)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

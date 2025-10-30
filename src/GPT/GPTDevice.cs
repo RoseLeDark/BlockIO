@@ -7,7 +7,7 @@ namespace BlockIO.GPT
     /// Represents a GPT-based storage device using the built-in <see cref="GPTParser"/>.
     /// Inherits partition management and stream access from <see cref="Device"/>.
     /// </summary>
-    public class GPTDevice : Device
+    public class GPTDevice : BaseDevice
     {
         /// <summary>
         /// Initializes a new GPT device with the specified path.

@@ -17,8 +17,9 @@ namespace BlockIO
         /// Initializes a new virtual partition over the entire device.
         /// </summary>
         /// <param name="device">The underlying device to wrap.</param>
-        public VirtualDevicePartition(AbstractDevice device)
-            : base(device, "VDevPart:" + device.Name) { }
+        /// <param name="startSector">Optional start sector (default: 0).</param>
+        public VirtualDevicePartition(AbstractDevice device, ulong startSector = 0)
+            : base(device, "VDevPart:" + device.Name, startSector) { }
 
         /// <summary>
         /// Gets the version information for this partition implementation.

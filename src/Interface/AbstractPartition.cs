@@ -43,13 +43,14 @@ namespace BlockIO.Interface
         /// </summary>
         private readonly object m_sync = new object();
 
-        private AbstractDevice m_device;
+        protected AbstractDevice m_device;
 
         /// <summary>
         /// Gets the device path associated with this partition.
         /// If this is a clone, the path is inherited from the parent.
         /// </summary>
         public string DevicePath => Parent != null ? Parent.DevicePath : m_device.DevicePath;
+
 
         /// <summary>
         /// Gets or sets the unique partition ID.
@@ -158,24 +159,24 @@ namespace BlockIO.Interface
             m_device = device;
         }
         /// <summary>
-        /// Initializes a virtual partition that spans the entire device.
-        /// Used for synthetic or device-wide views.
+        /// Initializes a virtual partition over a device, optionally starting at a given sector.
         /// </summary>
         /// <param name="device">The underlying device to wrap.</param>
-        /// <param name="Name">The name of the virtual partition.</param>
-        internal AbstractPartition(AbstractDevice device, string Name)
+        /// <param name="name">The name of the virtual partition.</param>
+        /// <param name="startSector">Optional start sector (default: 0).</param>
+        internal AbstractPartition(AbstractDevice device, string name, ulong startSector = 0)
         {
             Writable = true;
             Readable = true;
             Locked = false;
 
-            this.Name = Name;
+            this.Name = name;
             this.TypeGuid = GPTTypeRegistry.TypeGuids[GPTType.VirtualPartitionFromDevice];
             this.UniqueGuid = Guid.NewGuid();
 
-            this.StartSector = 0;
+            this.StartSector = startSector;
             this.EndSector = device.SectorCount - 1;
-            this.SectorCount = device.SectorCount;
+            this.SectorCount = device.SectorCount - startSector;
             this.SectorSize = device.SectorSize;
             this.Id = (int)AbstractPartition.getNextID();
             Parent = null;

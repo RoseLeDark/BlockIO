@@ -9,6 +9,8 @@ namespace BlockIO.GPT
         public const uint Revision = 0x00010000;
         public const int HeaderSize = 92;
 
+        public const int MinimumSectorCount = 32;
+
         public ulong MyLBA { get; set; }
         public ulong AlternateLBA { get; set; }
         public ulong FirstUsableLBA { get; set; }
@@ -36,6 +38,22 @@ namespace BlockIO.GPT
                 EntrySize = 128
             };
         }
+        public static bool TryFromBytes(byte[] buffer, out GptHeader? header)
+        {
+            header = null;
+            if (!IsValid(buffer))
+                return false;
+
+            try
+            {
+                header = FromBytes(buffer);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public static GptHeader FromBytes(byte[] buffer)
         {
             var span = buffer.AsSpan();
@@ -43,9 +61,12 @@ namespace BlockIO.GPT
                 throw new ArgumentException("Invalid GPT header signature.");*/
             // GPT Signatur prüfen
 
-            var signature = System.Text.Encoding.ASCII.GetString(buffer, 0, 8);
+            /*var signature = System.Text.Encoding.ASCII.GetString(buffer, 0, 8);
             if (signature != "EFI PART")
-                throw new ArgumentException("Invalid GPT header signature.");
+                throw new ArgumentException("Invalid GPT header signature.");*/
+
+            if(IsValid(buffer) == false)
+                throw new ArgumentException("Invalid GPT header CRC.");
 
             return new GptHeader
             {
@@ -100,6 +121,45 @@ namespace BlockIO.GPT
             };
 
             return backup.ToBytes();
+        }
+        public void ComputeHeaderCRC()
+        {
+            var buffer = ToBytes();
+            BinaryPrimitives.WriteUInt32LittleEndian(buffer.AsSpan(16, 4), 0);
+            var crc32 = new System.IO.Hashing.Crc32();
+            crc32.Append(buffer.AsSpan(0, HeaderSize));
+            HeaderCRC32 = crc32.GetCurrentHashAsUInt32();
+        }
+        public static bool IsValid(byte[] buffer)
+        {
+            if (buffer.Length < HeaderSize) return false;
+
+            var signature = Encoding.ASCII.GetString(buffer, 0, 8);
+            if (signature != "EFI PART") return false;
+
+            var span = buffer.AsSpan();
+            var expectedCRC = BinaryPrimitives.ReadUInt32LittleEndian(span.Slice(16, 4));
+            BinaryPrimitives.WriteUInt32LittleEndian(span.Slice(16, 4), 0);
+
+            var crc32 = new System.IO.Hashing.Crc32();
+            crc32.Append(span.Slice(0, HeaderSize));
+            return crc32.GetCurrentHashAsUInt32() == expectedCRC;
+        }
+
+        public GptHeader CloneAsBackup()
+        {
+            return new GptHeader
+            {
+                MyLBA = this.AlternateLBA,
+                AlternateLBA = this.MyLBA,
+                FirstUsableLBA = this.FirstUsableLBA,
+                LastUsableLBA = this.LastUsableLBA,
+                DiskGuid = this.DiskGuid,
+                PartitionEntryLBA = this.AlternateLBA - 32,
+                NumberOfEntries = this.NumberOfEntries,
+                EntrySize = this.EntrySize,
+                PartitionArrayCRC32 = this.PartitionArrayCRC32
+            };
         }
 
         public bool ValidateCRC(byte[] buffer)

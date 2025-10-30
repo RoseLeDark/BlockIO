@@ -12,7 +12,7 @@ namespace BlockIO.Generic
     /// Represents a concrete storage device implementation using GPT parsing.
     /// Provides partition discovery, device classification, and lifecycle management.
     /// </summary>
-    public class Device : AbstractDevice
+    public class BaseDevice : AbstractDevice
     {
         /// <summary>
         /// Internal partition list managed by the device.

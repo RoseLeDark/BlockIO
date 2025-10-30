@@ -20,6 +20,12 @@ namespace BlockIO
         private ulong _length;
         private ulong _syslength;
 
+        public string DevicePath { get { return _partition.DevicePath; } }
+
+        public int SectorSize { get { return _partition.SectorSize; } }
+
+        public AbstractDevice Device { get { return _partition.Device; } }
+
         /// <summary>
         /// Controls whether read/write operations must be aligned to the current BlockSize.
         /// If true, unaligned lengths will throw an exception.
